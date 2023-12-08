@@ -1,0 +1,68 @@
+---
+title: 'Source'
+description: 'General documentation about the format of Source modules.'
+icon: 'code'
+---
+
+## Basic Structure
+
+### Folder structure
+
+Below you can see the basic folder structure of a Source module. It includes the src folder, which is where you write the logic of the module, the dist folder, which is where the logic gets "transpiled" into, a makefile to create the .module file and the tsconfig for typescript support.
+
+```md
+├── src
+|  ├── search           // All ts files needed for the search data
+|  |  ├── code.ts
+|  |  └── ...
+|  |
+|  ├── info             // All ts files needed for the info data
+|  |  ├── code.ts
+|  |  └── ...
+|  |
+|  ├── media            // All ts files needed for the media (Video, Book) data
+|  |  ├── code.ts
+|  |  └── ...
+|  |
+|  ├── home             // All ts files needed for the home data
+|  |  ├── code.ts
+|  |  └── ...
+|  |
+|  ├── metadata.json    // general metadata
+|  ├── icon.png         // icon of the module (supported: PNG)
+|  └── types.ts         // Types used for typescript autocomplete
+|
+├── dist                // Transpiled js files
+|  └── ...
+|
+├── Makefile            // Used for compiling the module
+└── tsconfig.json       // Typescript configuration file
+```
+
+### Code structure
+
+The general structure of the `code.ts` files is as follows:
+- a `logic` function, taking in a `payload` as a `String`
+    - any web scraping logic can be put in here
+    - custom function called `sendRequest` to make requests to any resource needed, e.g.: The html of the search page
+
+```ts code.ts
+function logic(payload: String) {
+    // Logic of the type (Search/Info/etc.) here
+    const html = await sendRequest("https://example.com", {}, "GET");
+
+    sendResult({
+        action: "search",
+        result: [
+            {
+                url: "https://example.com/info/1",
+                img: "https://cdn.pixabay.com/photo/2019/07/22/20/36/mountains-4356017_1280.jpg",
+                title: "Title",
+                indicatorText: "Indicator",
+                currentCount: 1,
+                totalCount: 1,
+            }
+        ]
+    });
+}
+```
